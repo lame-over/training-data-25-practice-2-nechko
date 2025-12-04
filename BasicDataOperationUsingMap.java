@@ -25,8 +25,8 @@ public class BasicDataOperationUsingMap {
     private final Scorpion KEY_TO_SEARCH_AND_DELETE = new Scorpion("Гак",6.9);
     private final Scorpion KEY_TO_ADD = new Scorpion("Гак", 7.2);
 
-    private final String VALUE_TO_SEARCH_AND_DELETE = "Олена";
-    private final String VALUE_TO_ADD = "Богдан";
+    private final String VALUE_TO_SEARCH_AND_DELETE = "Владислав";
+    private final String VALUE_TO_ADD = "Владислав";
 
     private Hashtable<Scorpion, String> hashtable;
     private LinkedHashMap<Scorpion, String> linkedHashMap;
@@ -528,28 +528,28 @@ public class BasicDataOperationUsingMap {
     public static void main(String[] args) {
         // Створюємо початкові дані (ключ: Scorpion, значення: ім'я власника)
         Hashtable<Scorpion, String> hashtable = new Hashtable<>();
-        hashtable.put(new Scorpion("Тум", 2.3), "Андрій");
-        hashtable.put(new Scorpion("Луна",4.2), "Ірина");
-        hashtable.put(new Scorpion("Барсик", 3.12), "Олена");
-        hashtable.put(new Scorpion("Боні", 1.75), "Олена");
-        hashtable.put(new Scorpion("Тайсон", 9.2), "Ірина");
-        hashtable.put(new Scorpion("Барсик",1.9), "Андрій");
-        hashtable.put(new Scorpion("Ґуфі", 2.1), "Тимофій");
-        hashtable.put(new Scorpion("Ґуфі", 2.2), "Поліна");
-        hashtable.put(new Scorpion("Муся", 2.3), "Стефанія");
-        hashtable.put(new Scorpion("Чіпо", 2.4), "Ярослав");
+        hashtable.put(new Scorpion("Шип", 8.5), "Орест");
+        hashtable.put(new Scorpion("Жало", 7.2), "Зоряна");
+        hashtable.put(new Scorpion("Клеш", 9.1), "Макар");
+        hashtable.put(new Scorpion("Панцир", 6.8), "Іринка");
+        hashtable.put(new Scorpion("Жало", 7.8), "Демид");
+        hashtable.put(new Scorpion("Хвіст", 5.9), "Макар");
+        hashtable.put(new Scorpion("Терен", 8.2), "Оксана");
+        hashtable.put(new Scorpion("Скорп", 6.5), "Юхим");
+        hashtable.put(new Scorpion("Ракун", 7.1), "Зоряна");
+        hashtable.put(new Scorpion("Оса", 5.5), "Ярина");
 
         LinkedHashMap<Scorpion, String> linkedHashMap = new LinkedHashMap<Scorpion, String>() {{
-        put(new Scorpion("Тум", 2.3), "Андрій");
-        put(new Scorpion("Луна",4.2), "Ірина");
-        put(new Scorpion("Барсик", 3.12), "Олена");
-        put(new Scorpion("Боні", 1.75), "Олена");
-        put(new Scorpion("Тайсон", 9.2), "Ірина");
-        put(new Scorpion("Барсик",1.9), "Андрій");
-        put(new Scorpion("Ґуфі", 2.1), "Тимофій");
-        put(new Scorpion("Ґуфі", 2.2), "Поліна");
-        put(new Scorpion("Муся", 2.3), "Стефанія");
-        put(new Scorpion("Чіпо", 2.4), "Ярослав");
+        put(new Scorpion("Шип", 8.5), "Орест");
+        put(new Scorpion("Жало", 7.2), "Зоряна");
+        put(new Scorpion("Клеш", 9.1), "Макар");
+        put(new Scorpion("Панцир", 6.8), "Іринка");
+        put(new Scorpion("Жало", 7.8), "Демид");
+        put(new Scorpion("Хвіст", 5.9), "Макар");
+        put(new Scorpion("Терен", 8.2), "Оксана");
+        put(new Scorpion("Скорп", 6.5), "Юхим");
+        put(new Scorpion("Ракун", 7.1), "Зоряна");
+        put(new Scorpion("Оса", 5.5), "Ярина");
         }};
 
         // Створюємо об'єкт і виконуємо операції
