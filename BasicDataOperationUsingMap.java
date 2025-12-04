@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
 /**
  * Клас BasicDataOperationUsingMap реалізує операції з колекціями типу Map для зберігання пар ключ-значення.
@@ -22,22 +22,22 @@ import java.util.TreeMap;
  * </ul>
  */
 public class BasicDataOperationUsingMap {
-    private final Pet KEY_TO_SEARCH_AND_DELETE = new Pet("Луна", "Полярна сова");
-    private final Pet KEY_TO_ADD = new Pet("Кір", "Сова вухата");
+    private final Scorpion KEY_TO_SEARCH_AND_DELETE = new Scorpion("Гак",6.9);
+    private final Scorpion KEY_TO_ADD = new Scorpion("Гак", 7.2);
 
     private final String VALUE_TO_SEARCH_AND_DELETE = "Олена";
     private final String VALUE_TO_ADD = "Богдан";
 
-    private Hashtable<Pet, String> hashtable;
-    private TreeMap<Pet, String> treeMap;
+    private Hashtable<Scorpion, String> hashtable;
+    private LinkedHashMap<Scorpion, String> linkedHashMap;
 
     /**
      * Компаратор для сортування Map.Entry за значеннями String.
      * Використовує метод String.compareTo() для порівняння імен власників.
      */
-    static class OwnerValueComparator implements Comparator<Map.Entry<Pet, String>> {
+    static class OwnerValueComparator implements Comparator<Map.Entry<Scorpion, String>> {
         @Override
-        public int compare(Map.Entry<Pet, String> e1, Map.Entry<Pet, String> e2) {
+        public int compare(Map.Entry<Scorpion, String> e1, Map.Entry<Scorpion, String> e2) {
             String v1 = e1.getValue();
             String v2 = e2.getValue();
             if (v1 == null && v2 == null) return 0;
@@ -48,51 +48,51 @@ public class BasicDataOperationUsingMap {
     }
 
     /**
-     * Внутрішній клас Pet для зберігання інформації про домашню тварину.
+     * Внутрішній клас Scorpion для зберігання інформації про домашню тварину.
      * 
-     * Реалізує Comparable<Pet> для визначення природного порядку сортування.
-     * Природний порядок: спочатку за кличкою (nickname) за зростанням, потім за видом (species) за спаданням.
+     * Реалізує Comparable<Scorpion> для визначення природного порядку сортування.
+     * Природний порядок: спочатку за кличкою (nickname) за зростанням, потім за видом (pincerSize) за спаданням.
      */
-    public static class Pet implements Comparable<Pet> {
+    public static class Scorpion implements Comparable<Scorpion> {
         private final String nickname;
-        private final String species;
+        private final Double pincerSize;
 
-        public Pet(String nickname) {
+        public Scorpion(String nickname) {
             this.nickname = nickname;
-            this.species = null;
+            this.pincerSize = null;
         }
 
-        public Pet(String nickname, String species) {
+        public Scorpion(String nickname, Double pincerSize) {
             this.nickname = nickname;
-            this.species = species;
+            this.pincerSize = pincerSize;
         }
 
         public String getNickname() { 
             return nickname; 
         }
 
-        public String getSpecies() {
-            return species;
+        public Double getpincerSize() {
+            return pincerSize;
         }
 
         /**
-         * Порівнює цей об'єкт Pet з іншим для визначення порядку сортування.
-         * Природний порядок: спочатку за кличкою (nickname) за зростанням, потім за видом (species) за спаданням.
+         * Порівнює цей об'єкт Scorpion з іншим для визначення порядку сортування.
+         * Природний порядок: спочатку за кличкою (nickname) за зростанням, потім за видом (pincerSize) за спаданням.
          * 
-         * @param other Pet об'єкт для порівняння
-         * @return негативне число, якщо цей Pet < other; 
-         *         0, якщо цей Pet == other; 
-         *         позитивне число, якщо цей Pet > other
+         * @param other Scorpion об'єкт для порівняння
+         * @return негативне число, якщо цей Scorpion < other; 
+         *         0, якщо цей Scorpion == other; 
+         *         позитивне число, якщо цей Scorpion > other
          * 
-         * Критерій порівняння: поля nickname (кличка) за зростанням та species (вид) за спаданням.
+         * Критерій порівняння: поля nickname (кличка) за зростанням та pincerSize (вид) за спаданням.
          * 
          * Цей метод використовується:
-         * - TreeMap для автоматичного сортування ключів Pet за nickname (зростання), потім за species (спадання)
-         * - Collections.sort() для сортування Map.Entry за ключами Pet
+         * - LinkedHashMap для автоматичного сортування ключів Scorpion за nickname (зростання), потім за pincerSize (спадання)
+         * - Collections.sort() для сортування Map.Entry за ключами Scorpion
          * - Collections.binarySearch() для пошуку в відсортованих колекціях
          */
         @Override
-        public int compareTo(Pet other) {
+        public int compareTo(Scorpion other) {
             if (other == null) return 1;
             
             // Спочатку порівнюємо за кличкою (за зростанням)
@@ -104,7 +104,7 @@ public class BasicDataOperationUsingMap {
             } else if (other.nickname == null) {
                 nicknameComparison = 1;
             } else {
-                nicknameComparison = this.nickname.compareTo(other.nickname);
+                nicknameComparison = other.nickname.compareTo(this.nickname);
             }
             
             // Якщо клички різні, повертаємо результат
@@ -113,45 +113,45 @@ public class BasicDataOperationUsingMap {
             }
             
             // Якщо клички однакові, порівнюємо за видом (за спаданням - інвертуємо результат)
-            if (this.species == null && other.species == null) return 0;
-            if (this.species == null) return 1;  // null йде в кінець при спаданні
-            if (other.species == null) return -1;
-            return other.species.compareTo(this.species);  // Інвертоване порівняння для спадання
+            if (this.pincerSize == null && other.pincerSize == null) return 0;
+            if (this.pincerSize == null) return 1;  // null йде в кінець при спаданні
+            if (other.pincerSize == null) return -1;
+            return other.pincerSize.compareTo(this.pincerSize);  // Інвертоване порівняння для спадання
         }
 
         /**
-         * Перевіряє рівність цього Pet з іншим об'єктом.
-         * Два Pet вважаються рівними, якщо їх клички (nickname) та види (species) однакові.
+         * Перевіряє рівність цього Scorpion з іншим об'єктом.
+         * Два Scorpion вважаються рівними, якщо їх клички (nickname) та види (pincerSize) однакові.
          * 
          * @param obj об'єкт для порівняння
          * @return true, якщо об'єкти рівні; false в іншому випадку
          * 
-         * Критерій рівності: поля nickname (кличка) та species (вид).
+         * Критерій рівності: поля nickname (кличка) та pincerSize (вид).
          * 
          * Важливо: метод узгоджений з compareTo() - якщо equals() повертає true,
-         * то compareTo() повертає 0, оскільки обидва методи порівнюють за nickname та species.
+         * то compareTo() повертає 0, оскільки обидва методи порівнюють за nickname та pincerSize.
          */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (obj == null || getClass() != obj.getClass()) return false;
-            Pet pet = (Pet) obj;
+            Scorpion scorpion = (Scorpion) obj;
             
-            boolean nicknameEquals = nickname != null ? nickname.equals(pet.nickname) : pet.nickname == null;
-            boolean speciesEquals = species != null ? species.equals(pet.species) : pet.species == null;
+            boolean nicknameEquals = nickname != null ? nickname.equals(scorpion.nickname) : scorpion.nickname == null;
+            boolean pincerSizeEquals = pincerSize != null ? pincerSize.equals(scorpion.pincerSize) : scorpion.pincerSize == null;
             
-            return nicknameEquals && speciesEquals;
+            return nicknameEquals && pincerSizeEquals;
         }
 
         /**
-         * Повертає хеш-код для цього Pet.
+         * Повертає хеш-код для цього Scorpion.
          * 
-         * @return хеш-код, обчислений на основі nickname та species
+         * @return хеш-код, обчислений на основі nickname та pincerSize
          * 
-         * Базується на полях nickname та species для узгодженості з equals().
+         * Базується на полях nickname та pincerSize для узгодженості з equals().
          * 
-         * Важливо: узгоджений з equals() - якщо два Pet рівні за equals()
-         * (мають однакові nickname та species), вони матимуть однаковий hashCode().
+         * Важливо: узгоджений з equals() - якщо два Scorpion рівні за equals()
+         * (мають однакові nickname та pincerSize), вони матимуть однаковий hashCode().
          */
         @Override
         public int hashCode() {
@@ -161,35 +161,35 @@ public class BasicDataOperationUsingMap {
             // Комбінуємо хеш-коди полів за формулою: result = 31 * result + hashCode(поле)
             // Множник 31 - просте число, яке дає хороше розподілення хеш-кодів
             // і оптимізується JVM як (result << 5) - result
-            // Додаємо хеш-код виду (або 0, якщо species == null) до загального результату
-            result = 31 * result + (species != null ? species.hashCode() : 0);
+            // Додаємо хеш-код виду (або 0, якщо pincerSize == null) до загального результату
+            result = 31 * result + (pincerSize != null ? pincerSize.hashCode() : 0);
             
             return result;
         }
 
         /**
-         * Повертає строкове представлення Pet.
+         * Повертає строкове представлення Scorpion.
          * 
-         * @return кличка тварини (nickname), вид (species) та hashCode
+         * @return кличка тварини (nickname), вид (pincerSize) та hashCode
          */
         @Override
         public String toString() {
-            if (species != null) {
-                return "Pet{nickname='" + nickname + "', species='" + species + "', hashCode=" + hashCode() + "}";
+            if (pincerSize != null) {
+                return "Scorpion{nickname='" + nickname + "', pincerSize='" + pincerSize + "', hashCode=" + hashCode() + "}";
             }
-            return "Pet{nickname='" + nickname + "', hashCode=" + hashCode() + "}";
+            return "Scorpion{nickname='" + nickname + "', hashCode=" + hashCode() + "}";
         }
     }
 
     /**
      * Конструктор, який ініціалізує об'єкт з готовими даними.
      * 
-     * @param hashtable Hashtable з початковими даними (ключ: Pet, значення: ім'я власника)
-     * @param treeMap TreeMap з початковими даними (ключ: Pet, значення: ім'я власника)
+     * @param hashtable Hashtable з початковими даними (ключ: Scorpion, значення: ім'я власника)
+     * @param linkedHashMap LinkedHashMap з початковими даними (ключ: Scorpion, значення: ім'я власника)
      */
-    BasicDataOperationUsingMap(Hashtable<Pet, String> hashtable, TreeMap<Pet, String> treeMap) {
+    BasicDataOperationUsingMap(Hashtable<Scorpion, String> hashtable, LinkedHashMap<Scorpion, String> linkedHashMap) {
         this.hashtable = hashtable;
-        this.treeMap = treeMap;
+        this.linkedHashMap = linkedHashMap;
     }
     
     /**
@@ -221,21 +221,23 @@ public class BasicDataOperationUsingMap {
                
         System.out.println("Кінцевий розмір Hashtable: " + hashtable.size());
 
-        // Потім обробляємо TreeMap
-        System.out.println("\n\n========= Операції з TreeMap =========");
-        System.out.println("Початковий розмір TreeMap: " + treeMap.size());
+        // Потім обробляємо LinkedHashMap
+        System.out.println("\n\n========= Операції з LinkedHashMap =========");
+        System.out.println("Початковий розмір LinkedHashMap: " + linkedHashMap.size());
         
-        findByKeyInTreeMap();
-        findByValueInTreeMap();
+        findByKeyInLinkedHashMap();
+        findByValueInLinkedHashMap();
 
-        printTreeMap();
+        printLinkedHashMap();
+        sortLinkedHashMap();
+        printLinkedHashMap();
 
-        addEntryToTreeMap();
+        addEntryToLinkedHashMap();
         
-        removeByKeyFromTreeMap();
-        removeByValueFromTreeMap();
+        removeByKeyFromLinkedHashMap();
+        removeByValueFromLinkedHashMap();
         
-        System.out.println("Кінцевий розмір TreeMap: " + treeMap.size());
+        System.out.println("Кінцевий розмір LinkedHashMap: " + linkedHashMap.size());
     }
 
 
@@ -249,7 +251,7 @@ public class BasicDataOperationUsingMap {
         System.out.println("\n=== Пари ключ-значення в Hashtable ===");
         long timeStart = System.nanoTime();
 
-        for (Map.Entry<Pet, String> entry : hashtable.entrySet()) {
+        for (Map.Entry<Scorpion, String> entry : hashtable.entrySet()) {
             System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
         }
 
@@ -257,20 +259,39 @@ public class BasicDataOperationUsingMap {
     }
 
     /**
-     * Сортує Hashtable за ключами.
-     * Використовує Collections.sort() з природним порядком Pet (Pet.compareTo()).
-     * Перезаписує hashtable відсортованими даними.
+     * Сортує LinkedHashMap за ключами.
+     * Використовує Collections.sort() з природним порядком Scorpion (Scorpion.compareTo()).
+     * Перезаписує linkedHashMap відсортованими даними.
      */
+    private void sortLinkedHashMap() {
+        long timeStart = System.nanoTime();
+
+        // Створюємо список ключів і сортуємо за природним порядком Scorpion
+        List<Scorpion> sortedKeys = new ArrayList<>(linkedHashMap.keySet());
+        Collections.sort(sortedKeys);
+        
+        // Створюємо нову LinkedHashMap з відсортованими ключами
+        LinkedHashMap<Scorpion, String> sortedLinkedHashMap = new LinkedHashMap<>();
+        for (Scorpion key : sortedKeys) {
+            sortedLinkedHashMap.put(key, linkedHashMap.get(key));
+        }
+        
+        // Перезаписуємо оригінальну linkedHashMap
+        linkedHashMap = sortedLinkedHashMap;
+
+        PerformanceTracker.displayOperationTime(timeStart, "сортування LinkedHashMap за ключами");
+    }
+
     private void sortHashtable() {
         long timeStart = System.nanoTime();
 
-        // Створюємо список ключів і сортуємо за природним порядком Pet
-        List<Pet> sortedKeys = new ArrayList<>(hashtable.keySet());
+        // Створюємо список ключів і сортуємо за природним порядком Scorpion
+        List<Scorpion> sortedKeys = new ArrayList<>(hashtable.keySet());
         Collections.sort(sortedKeys);
         
         // Створюємо нову Hashtable з відсортованими ключами
-        Hashtable<Pet, String> sortedHashtable = new Hashtable<>();
-        for (Pet key : sortedKeys) {
+        Hashtable<Scorpion, String> sortedHashtable = new Hashtable<>();
+        for (Scorpion key : sortedKeys) {
             sortedHashtable.put(key, hashtable.get(key));
         }
         
@@ -282,7 +303,7 @@ public class BasicDataOperationUsingMap {
 
     /**
      * Здійснює пошук елемента за ключем в Hashtable.
-     * Використовує Pet.hashCode() та Pet.equals() для пошуку.
+     * Використовує Scorpion.hashCode() та Scorpion.equals() для пошуку.
      */
     void findByKeyInHashtable() {
         long timeStart = System.nanoTime();
@@ -307,13 +328,13 @@ public class BasicDataOperationUsingMap {
         long timeStart = System.nanoTime();
 
         // Створюємо список Entry та сортуємо за значеннями
-        List<Map.Entry<Pet, String>> entries = new ArrayList<>(hashtable.entrySet());
+        List<Map.Entry<Scorpion, String>> entries = new ArrayList<>(hashtable.entrySet());
         OwnerValueComparator comparator = new OwnerValueComparator();
         Collections.sort(entries, comparator);
 
         // Створюємо тимчасовий Entry для пошуку
-        Map.Entry<Pet, String> searchEntry = new Map.Entry<Pet, String>() {
-            public Pet getKey() { return null; }
+        Map.Entry<Scorpion, String> searchEntry = new Map.Entry<Scorpion, String>() {
+            public Scorpion getKey() { return null; }
             public String getValue() { return VALUE_TO_SEARCH_AND_DELETE; }
             public String setValue(String value) { return null; }
         };
@@ -323,8 +344,8 @@ public class BasicDataOperationUsingMap {
         PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в Hashtable");
 
         if (position >= 0) {
-            Map.Entry<Pet, String> foundEntry = entries.get(position);
-            System.out.println("Власника '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Pet: " + foundEntry.getKey());
+            Map.Entry<Scorpion, String> foundEntry = entries.get(position);
+            System.out.println("Власника '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Scorpion: " + foundEntry.getKey());
         } else {
             System.out.println("Власник '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутній в Hashtable.");
         }
@@ -340,7 +361,7 @@ public class BasicDataOperationUsingMap {
 
         PerformanceTracker.displayOperationTime(timeStart, "додавання запису до Hashtable");
 
-        System.out.println("Додано новий запис: Pet='" + KEY_TO_ADD + "', власник='" + VALUE_TO_ADD + "'");
+        System.out.println("Додано новий запис: Scorpion='" + KEY_TO_ADD + "', власник='" + VALUE_TO_ADD + "'");
     }
 
     /**
@@ -366,14 +387,14 @@ public class BasicDataOperationUsingMap {
     void removeByValueFromHashtable() {
         long timeStart = System.nanoTime();
 
-        List<Pet> keysToRemove = new ArrayList<>();
-        for (Map.Entry<Pet, String> entry : hashtable.entrySet()) {
+        List<Scorpion> keysToRemove = new ArrayList<>();
+        for (Map.Entry<Scorpion, String> entry : hashtable.entrySet()) {
             if (entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE)) {
                 keysToRemove.add(entry.getKey());
             }
         }
         
-        for (Pet key : keysToRemove) {
+        for (Scorpion key : keysToRemove) {
             hashtable.remove(key);
         }
 
@@ -382,95 +403,95 @@ public class BasicDataOperationUsingMap {
         System.out.println("Видалено " + keysToRemove.size() + " записів з власником '" + VALUE_TO_SEARCH_AND_DELETE + "'");
     }
 
-    // ===== Методи для TreeMap =====
+    // ===== Методи для LinkedHashMap =====
 
     /**
-     * Виводить вміст TreeMap.
-     * TreeMap автоматично відсортована за ключами (Pet nickname за зростанням, species за спаданням).
+     * Виводить вміст LinkedHashMap.
+     * LinkedHashMap автоматично відсортована за ключами (Scorpion nickname за зростанням, pincerSize за спаданням).
      */
-    private void printTreeMap() {
-        System.out.println("\n=== Пари ключ-значення в TreeMap ===");
+    private void printLinkedHashMap() {
+        System.out.println("\n=== Пари ключ-значення в LinkedHashMap ===");
 
         long timeStart = System.nanoTime();
-        for (Map.Entry<Pet, String> entry : treeMap.entrySet()) {
+        for (Map.Entry<Scorpion, String> entry : linkedHashMap.entrySet()) {
             System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
         }
 
-        PerformanceTracker.displayOperationTime(timeStart, "виведення пар ключ-значення в TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "виведення пар ключ-значення в LinkedHashMap");
     }
 
     /**
-     * Здійснює пошук елемента за ключем в TreeMap.
-     * Використовує Pet.compareTo() для навігації по дереву.
+     * Здійснює пошук елемента за ключем в LinkedHashMap.
+     * Використовує Scorpion.compareTo() для навігації по дереву.
      */
-    void findByKeyInTreeMap() {
+    void findByKeyInLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        boolean found = treeMap.containsKey(KEY_TO_SEARCH_AND_DELETE);
+        boolean found = linkedHashMap.containsKey(KEY_TO_SEARCH_AND_DELETE);
 
-        PerformanceTracker.displayOperationTime(timeStart, "пошук за ключем в TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "пошук за ключем в LinkedHashMap");
 
         if (found) {
-            String value = treeMap.get(KEY_TO_SEARCH_AND_DELETE);
+            String value = linkedHashMap.get(KEY_TO_SEARCH_AND_DELETE);
             System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' знайдено. Власник: " + value);
         } else {
-            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' відсутній в TreeMap.");
+            System.out.println("Елемент з ключем '" + KEY_TO_SEARCH_AND_DELETE + "' відсутній в LinkedHashMap.");
         }
     }
 
     /**
-     * Здійснює пошук елемента за значенням в TreeMap.
+     * Здійснює пошук елемента за значенням в LinkedHashMap.
      * Сортує список Map.Entry за значеннями та використовує бінарний пошук.
      */
-    void findByValueInTreeMap() {
+    void findByValueInLinkedHashMap() {
         long timeStart = System.nanoTime();
 
         // Створюємо список Entry та сортуємо за значеннями
-        List<Map.Entry<Pet, String>> entries = new ArrayList<>(treeMap.entrySet());
+        List<Map.Entry<Scorpion, String>> entries = new ArrayList<>(linkedHashMap.entrySet());
         OwnerValueComparator comparator = new OwnerValueComparator();
         Collections.sort(entries, comparator);
 
         // Створюємо тимчасовий Entry для пошуку
-        Map.Entry<Pet, String> searchEntry = new Map.Entry<Pet, String>() {
-            public Pet getKey() { return null; }
+        Map.Entry<Scorpion, String> searchEntry = new Map.Entry<Scorpion, String>() {
+            public Scorpion getKey() { return null; }
             public String getValue() { return VALUE_TO_SEARCH_AND_DELETE; }
             public String setValue(String value) { return null; }
         };
 
         int position = Collections.binarySearch(entries, searchEntry, comparator);
 
-        PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в LinkedHashMap");
 
         if (position >= 0) {
-            Map.Entry<Pet, String> foundEntry = entries.get(position);
-            System.out.println("Власника '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Pet: " + foundEntry.getKey());
+            Map.Entry<Scorpion, String> foundEntry = entries.get(position);
+            System.out.println("Власника '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Scorpion: " + foundEntry.getKey());
         } else {
-            System.out.println("Власник '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутній в TreeMap.");
+            System.out.println("Власник '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутній в LinkedHashMap.");
         }
     }
 
     /**
-     * Додає новий запис до TreeMap.
+     * Додає новий запис до LinkedHashMap.
      */
-    void addEntryToTreeMap() {
+    void addEntryToLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        treeMap.put(KEY_TO_ADD, VALUE_TO_ADD);
+        linkedHashMap.put(KEY_TO_ADD, VALUE_TO_ADD);
 
-        PerformanceTracker.displayOperationTime(timeStart, "додавання запису до TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "додавання запису до LinkedHashMap");
 
-        System.out.println("Додано новий запис: Pet='" + KEY_TO_ADD + "', власник='" + VALUE_TO_ADD + "'");
+        System.out.println("Додано новий запис: Scorpion='" + KEY_TO_ADD + "', власник='" + VALUE_TO_ADD + "'");
     }
 
     /**
-     * Видаляє запис з TreeMap за ключем.
+     * Видаляє запис з LinkedHashMap за ключем.
      */
-    void removeByKeyFromTreeMap() {
+    void removeByKeyFromLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        String removedValue = treeMap.remove(KEY_TO_SEARCH_AND_DELETE);
+        String removedValue = linkedHashMap.remove(KEY_TO_SEARCH_AND_DELETE);
 
-        PerformanceTracker.displayOperationTime(timeStart, "видалення за ключем з TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "видалення за ключем з LinkedHashMap");
 
         if (removedValue != null) {
             System.out.println("Видалено запис з ключем '" + KEY_TO_SEARCH_AND_DELETE + "'. Власник був: " + removedValue);
@@ -480,23 +501,23 @@ public class BasicDataOperationUsingMap {
     }
 
     /**
-     * Видаляє записи з TreeMap за значенням.
+     * Видаляє записи з LinkedHashMap за значенням.
      */
-    void removeByValueFromTreeMap() {
+    void removeByValueFromLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        List<Pet> keysToRemove = new ArrayList<>();
-        for (Map.Entry<Pet, String> entry : treeMap.entrySet()) {
+        List<Scorpion> keysToRemove = new ArrayList<>();
+        for (Map.Entry<Scorpion, String> entry : linkedHashMap.entrySet()) {
             if (entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE)) {
                 keysToRemove.add(entry.getKey());
             }
         }
         
-        for (Pet key : keysToRemove) {
-            treeMap.remove(key);
+        for (Scorpion key : keysToRemove) {
+            linkedHashMap.remove(key);
         }
 
-        PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з TreeMap");
+        PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з LinkedHashMap");
 
         System.out.println("Видалено " + keysToRemove.size() + " записів з власником '" + VALUE_TO_SEARCH_AND_DELETE + "'");
     }
@@ -505,34 +526,34 @@ public class BasicDataOperationUsingMap {
      * Головний метод для запуску програми.
      */
     public static void main(String[] args) {
-        // Створюємо початкові дані (ключ: Pet, значення: ім'я власника)
-        Hashtable<Pet, String> hashtable = new Hashtable<>();
-        hashtable.put(new Pet("Тум", "Сова вухата"), "Андрій");
-        hashtable.put(new Pet("Луна", "Полярна сова"), "Ірина");
-        hashtable.put(new Pet("Барсик", "Сова сіра"), "Олена");
-        hashtable.put(new Pet("Боні", "Сипуха"), "Олена");
-        hashtable.put(new Pet("Тайсон", "Сова болотяна"), "Ірина");
-        hashtable.put(new Pet("Барсик", "Сичик-горобець"), "Андрій");
-        hashtable.put(new Pet("Ґуфі", "Сова болотяна"), "Тимофій");
-        hashtable.put(new Pet("Боні", "Сова яструбина"), "Поліна");
-        hashtable.put(new Pet("Муся", "Сова білолиця"), "Стефанія");
-        hashtable.put(new Pet("Чіпо", "Сичик-хатник"), "Ярослав");
+        // Створюємо початкові дані (ключ: Scorpion, значення: ім'я власника)
+        Hashtable<Scorpion, String> hashtable = new Hashtable<>();
+        hashtable.put(new Scorpion("Тум", 2.3), "Андрій");
+        hashtable.put(new Scorpion("Луна",4.2), "Ірина");
+        hashtable.put(new Scorpion("Барсик", 3.12), "Олена");
+        hashtable.put(new Scorpion("Боні", 1.75), "Олена");
+        hashtable.put(new Scorpion("Тайсон", 9.2), "Ірина");
+        hashtable.put(new Scorpion("Барсик",1.9), "Андрій");
+        hashtable.put(new Scorpion("Ґуфі", 2.1), "Тимофій");
+        hashtable.put(new Scorpion("Ґуфі", 2.2), "Поліна");
+        hashtable.put(new Scorpion("Муся", 2.3), "Стефанія");
+        hashtable.put(new Scorpion("Чіпо", 2.4), "Ярослав");
 
-        TreeMap<Pet, String> treeMap = new TreeMap<Pet, String>() {{
-            put(new Pet("Тум", "Сова вухата"), "Андрій");
-            put(new Pet("Луна", "Полярна сова"), "Ірина");
-            put(new Pet("Барсик", "Сова сіра"), "Олена");
-            put(new Pet("Боні", "Сипуха"), "Олена");
-            put(new Pet("Тайсон", "Сова болотяна"), "Ірина");
-            put(new Pet("Барсик", "Сичик-горобець"), "Андрій");
-            put(new Pet("Ґуфі", "Сова болотяна"), "Тимофій");
-            put(new Pet("Боні", "Сова яструбина"), "Поліна");
-            put(new Pet("Муся", "Сова білолиця"), "Стефанія");
-            put(new Pet("Чіпо", "Сичик-хатник"), "Ярослав");
+        LinkedHashMap<Scorpion, String> linkedHashMap = new LinkedHashMap<Scorpion, String>() {{
+        put(new Scorpion("Тум", 2.3), "Андрій");
+        put(new Scorpion("Луна",4.2), "Ірина");
+        put(new Scorpion("Барсик", 3.12), "Олена");
+        put(new Scorpion("Боні", 1.75), "Олена");
+        put(new Scorpion("Тайсон", 9.2), "Ірина");
+        put(new Scorpion("Барсик",1.9), "Андрій");
+        put(new Scorpion("Ґуфі", 2.1), "Тимофій");
+        put(new Scorpion("Ґуфі", 2.2), "Поліна");
+        put(new Scorpion("Муся", 2.3), "Стефанія");
+        put(new Scorpion("Чіпо", 2.4), "Ярослав");
         }};
 
         // Створюємо об'єкт і виконуємо операції
-        BasicDataOperationUsingMap operations = new BasicDataOperationUsingMap(hashtable, treeMap);
+        BasicDataOperationUsingMap operations = new BasicDataOperationUsingMap(hashtable, linkedHashMap);
         operations.executeDataOperations();
     }
 }

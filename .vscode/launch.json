@@ -6,7 +6,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "BasicDataOperation",
+            "name": "BasicDataOperationUsingMap",
             "request": "launch",
             "mainClass": "${file}",
             "args": "311371.4"
