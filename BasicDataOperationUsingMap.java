@@ -25,7 +25,7 @@ public class BasicDataOperationUsingMap {
     private final Scorpion KEY_TO_SEARCH_AND_DELETE = new Scorpion("Гак",6.9);
     private final Scorpion KEY_TO_ADD = new Scorpion("Гак", 7.2);
 
-    private final String VALUE_TO_SEARCH_AND_DELETE = "Владислав";
+    private final String VALUE_TO_SEARCH_AND_DELETE = "Макар";
     private final String VALUE_TO_ADD = "Владислав";
 
     private Hashtable<Scorpion, String> hashtable;
