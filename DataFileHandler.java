@@ -3,8 +3,10 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Клас DataFileHandler управляє роботою з файлами даних float.
@@ -22,23 +24,14 @@ public class DataFileHandler {
         int currentIndex = 0;
 
         try (BufferedReader fileReader = new BufferedReader(new FileReader(filePath))) {
-            String currentLine;
-            while ((currentLine = fileReader.readLine()) != null) {
-                // Видаляємо можливі невидимі символи та BOM
-                currentLine = currentLine.trim().replaceAll("^\\uFEFF", "");
-                if (!currentLine.isEmpty()) {
-                    float parsedDateTime = Float.parseFloat(currentLine);
-                    temporaryArray[currentIndex++] = parsedDateTime;
-                }
-            }
+            return fileReader.lines()
+                    .map(currentLine -> currentLine.trim().replaceAll("^\\uFEFF", ""))
+                    .filter(currentLine -> !currentLine.isEmpty())
+                    .map(currentLine -> Float.parseFloat(currentLine))
+                    .toArray(Float[]::new);
         } catch (IOException ioException) {
-            ioException.printStackTrace();
+            throw new RuntimeException("Помилка читання даних з файлу: " + filePath, ioException);
         }
-
-        Float[] resultArray = new Float[currentIndex];
-        System.arraycopy(temporaryArray, 0, resultArray, 0, currentIndex);
-
-        return resultArray;
     }
 
     /**
@@ -49,10 +42,12 @@ public class DataFileHandler {
      */
     public static void writeArrayToFile(Float[] floatArray, String filePath) {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath))) {
-            for (Float dateTimeElement : floatArray) {
-                fileWriter.write(dateTimeElement.toString());
-                fileWriter.newLine();
-            }
+            String content = Arrays.stream(floatArray)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(System.lineSeparator()));
+           
+            fileWriter.write(content);
+
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

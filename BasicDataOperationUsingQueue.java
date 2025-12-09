@@ -1,5 +1,6 @@
 
 import java.util.Queue;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -128,7 +129,9 @@ public class BasicDataOperationUsingQueue {
         // вимірюємо час пошуку в черзі
         long timeStart = System.nanoTime();
 
-        boolean elementExists = this.dateTimeQueue.contains(floatValueToSearch);
+        boolean elementExists = dateTimeQueue.stream()
+            .anyMatch(dateTime -> dateTime.equals(floatValueToSearch));
+
 
         PerformanceTracker.displayOperationTime(timeStart, "пошук елемента в Queue дати i часу");
 
@@ -151,8 +154,13 @@ public class BasicDataOperationUsingQueue {
         // відстежуємо час пошуку граничних значень
         long timeStart = System.nanoTime();
 
-        float minValue = Collections.min(dateTimeQueue);
-        float maxValue = Collections.max(dateTimeQueue);
+        float minValue = dateTimeQueue.stream()
+            .min(Float::compareTo)
+            .orElse(null);
+       
+        float maxValue = dateTimeQueue.stream()
+            .max(Float::compareTo)
+            .orElse(null);
 
         PerformanceTracker.displayOperationTime(timeStart, "визначення мiнiмальної i максимальної дати в Queue");
 

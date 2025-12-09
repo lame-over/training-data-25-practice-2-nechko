@@ -1,4 +1,5 @@
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -123,7 +124,8 @@ public class BasicDataOperationUsingSet {
     private void findInSet() {
         long timeStart = System.nanoTime();
 
-        boolean elementExists = this.dateTimeSet.contains(floatValueToSearch);
+        boolean elementExists = dateTimeSet.stream()
+            .anyMatch(dateTime -> dateTime.equals(floatValueToSearch));
 
         PerformanceTracker.displayOperationTime(timeStart, "пошук елемента в LinkedHashSet дати i часу");
 
@@ -145,8 +147,14 @@ public class BasicDataOperationUsingSet {
 
         long timeStart = System.nanoTime();
 
-        float minValue = Collections.min(dateTimeSet);
-        float maxValue = Collections.max(dateTimeSet);
+        float minValue = dateTimeSet.stream()
+                .min(Float::compareTo)
+                .orElse(null);
+       
+        float maxValue = dateTimeSet.stream()
+                .max(Float::compareTo)
+                .orElse(null);
+
 
         PerformanceTracker.displayOperationTime(timeStart, "визначення мiнiмальної i максимальної дати в LinkedHashSet");
 
@@ -161,13 +169,9 @@ public class BasicDataOperationUsingSet {
         System.out.println("Кiлькiсть елементiв в масивi: " + floatArray.length);
         System.out.println("Кiлькiсть елементiв в LinkedHashSet: " + dateTimeSet.size());
 
-        boolean allElementsPresent = true;
-        for (float dateTimeElement : floatArray) {
-            if (!dateTimeSet.contains(dateTimeElement)) {
-                allElementsPresent = false;
-                break;
-            }
-        }
+        boolean allElementsPresent = Arrays.stream(floatArray)
+            .allMatch(dateTimeSet::contains);
+
 
         if (allElementsPresent) {
             System.out.println("Всi елементи масиву наявні в LinkedHashSet.");
