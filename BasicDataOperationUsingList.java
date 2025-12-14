@@ -1,8 +1,10 @@
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Клас BasicDataOperationUsingList реалізує операції з колекціями типу ArrayList для даних float.
@@ -19,7 +21,7 @@ import java.util.List;
  * </ul>
  */
 public class BasicDataOperationUsingList {
-    private float floatValueToSearch;
+    private Float floatValueToSearch;
     private Float[] floatArray;
     private List<Float> dateTimeList;
 
@@ -29,7 +31,7 @@ public class BasicDataOperationUsingList {
      * @param floatValueToSearch Значення для пошуку
      * @param floatArray Масив float
      */
-    BasicDataOperationUsingList(float floatValueToSearch, Float[] floatArray) {
+    BasicDataOperationUsingList(Float floatValueToSearch, Float[] floatArray) {
         this.floatValueToSearch = floatValueToSearch;
         this.floatArray = floatArray;
         this.dateTimeList = new ArrayList<>(Arrays.asList(floatArray));
@@ -71,7 +73,9 @@ public class BasicDataOperationUsingList {
     void performArraySorting() {
         long timeStart = System.nanoTime();
 
-        Arrays.sort(floatArray);
+        floatArray = Arrays.stream(floatArray)
+            .sorted()
+            .toArray(Float[]::new);
 
         PerformanceTracker.displayOperationTime(timeStart, "упорядкування масиву дати i часу");
     }
@@ -82,7 +86,11 @@ public class BasicDataOperationUsingList {
     void findInArray() {
         long timeStart = System.nanoTime();
 
-        int position = Arrays.binarySearch(this.floatArray, floatValueToSearch);
+        int position = IntStream.range(0, floatArray.length)
+            .filter(i -> Float.compare(floatValueToSearch, floatArray[i]) == 0)
+            .findFirst()
+            .orElse(-1);
+
 
         PerformanceTracker.displayOperationTime(timeStart, "пошук елемента в масивi дати i часу");
 
@@ -104,22 +112,20 @@ public class BasicDataOperationUsingList {
 
         long timeStart = System.nanoTime();
 
-        float minValue = floatArray[0];
-        float maxValue = floatArray[0];
+        float min = Arrays.stream(floatArray)
+            .min(Float::compareTo)
+            .orElse(null);
 
-        for (float currentDateTime : floatArray) {
-            if (floatValueToSearch < minValue) {
-                minValue = currentDateTime;
-            }
-            if (floatValueToSearch > maxValue) {
-                maxValue = currentDateTime;
-            }
-        }
+
+        float max = Arrays.stream(floatArray)
+            .max(Float::compareTo)
+            .orElse(null);
+
 
         PerformanceTracker.displayOperationTime(timeStart, "визначення мiнiмальної i максимальної дати в масивi");
 
-        System.out.println("Найменше значення в масивi: " + minValue);
-        System.out.println("Найбільше значення в масивi: " + maxValue);
+        System.out.println("Найменше значення в масивi: " + min);
+        System.out.println("Найбільше значення в масивi: " + max);
     }
 
     /**
@@ -128,7 +134,11 @@ public class BasicDataOperationUsingList {
     void findInList() {
         long timeStart = System.nanoTime();
 
-        int position = Collections.binarySearch(this.dateTimeList, floatValueToSearch);
+        int position = IntStream.range(0, floatArray.length)
+            .filter(i -> Float.compare(floatValueToSearch, floatArray[i]) == 0)
+            .findFirst()
+            .orElse(-1);
+
 
         PerformanceTracker.displayOperationTime(timeStart, "пошук елемента в List дати i часу");        
 
@@ -166,7 +176,10 @@ public class BasicDataOperationUsingList {
     void sortList() {
         long timeStart = System.nanoTime();
 
-        Collections.sort(dateTimeList);
+        dateTimeList = dateTimeList.stream()
+            .sorted()
+            .toList();
+
 
         PerformanceTracker.displayOperationTime(timeStart, "упорядкування ArrayList дати i часу");
     }
