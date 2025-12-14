@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.LinkedHashMap;
 
 /**
@@ -251,9 +252,10 @@ public class BasicDataOperationUsingMap {
         System.out.println("\n=== Пари ключ-значення в Hashtable ===");
         long timeStart = System.nanoTime();
 
-        for (Map.Entry<Scorpion, String> entry : hashtable.entrySet()) {
-            System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
-        }
+        hashtable.entrySet().forEach(entry ->
+            System.out.println("  " + entry.getKey() + " -> " + entry.getValue())
+        );
+
 
         PerformanceTracker.displayOperationTime(timeStart, "виведення пари ключ-значення в Hashtable");
     }
@@ -266,18 +268,14 @@ public class BasicDataOperationUsingMap {
     private void sortLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        // Створюємо список ключів і сортуємо за природним порядком Scorpion
-        List<Scorpion> sortedKeys = new ArrayList<>(linkedHashMap.keySet());
-        Collections.sort(sortedKeys);
-        
-        // Створюємо нову LinkedHashMap з відсортованими ключами
-        LinkedHashMap<Scorpion, String> sortedLinkedHashMap = new LinkedHashMap<>();
-        for (Scorpion key : sortedKeys) {
-            sortedLinkedHashMap.put(key, linkedHashMap.get(key));
-        }
-        
-        // Перезаписуємо оригінальну linkedHashMap
-        linkedHashMap = sortedLinkedHashMap;
+        linkedHashMap = linkedHashMap.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (e1, e2) -> e1,
+                    LinkedHashMap::new
+            ));
 
         PerformanceTracker.displayOperationTime(timeStart, "сортування LinkedHashMap за ключами");
     }
@@ -285,18 +283,14 @@ public class BasicDataOperationUsingMap {
     private void sortHashtable() {
         long timeStart = System.nanoTime();
 
-        // Створюємо список ключів і сортуємо за природним порядком Scorpion
-        List<Scorpion> sortedKeys = new ArrayList<>(hashtable.keySet());
-        Collections.sort(sortedKeys);
-        
-        // Створюємо нову Hashtable з відсортованими ключами
-        Hashtable<Scorpion, String> sortedHashtable = new Hashtable<>();
-        for (Scorpion key : sortedKeys) {
-            sortedHashtable.put(key, hashtable.get(key));
-        }
-        
-        // Перезаписуємо оригінальну hashtable
-        hashtable = sortedHashtable;
+        hashtable = hashtable.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (e1, e2) -> e1,
+                    Hashtable::new
+            ));
 
         PerformanceTracker.displayOperationTime(timeStart, "сортування Hashtable за ключами");
     }
@@ -325,30 +319,13 @@ public class BasicDataOperationUsingMap {
      * Сортує список Map.Entry за значеннями та використовує бінарний пошук.
      */
     void findByValueInHashtable() {
-        long timeStart = System.nanoTime();
+        List<Scorpion> keysToRemove = hashtable.entrySet().stream()
+            .filter(entry -> entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
 
-        // Створюємо список Entry та сортуємо за значеннями
-        List<Map.Entry<Scorpion, String>> entries = new ArrayList<>(hashtable.entrySet());
-        OwnerValueComparator comparator = new OwnerValueComparator();
-        Collections.sort(entries, comparator);
 
-        // Створюємо тимчасовий Entry для пошуку
-        Map.Entry<Scorpion, String> searchEntry = new Map.Entry<Scorpion, String>() {
-            public Scorpion getKey() { return null; }
-            public String getValue() { return VALUE_TO_SEARCH_AND_DELETE; }
-            public String setValue(String value) { return null; }
-        };
-
-        int position = Collections.binarySearch(entries, searchEntry, comparator);
-
-        PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в Hashtable");
-
-        if (position >= 0) {
-            Map.Entry<Scorpion, String> foundEntry = entries.get(position);
-            System.out.println("Власника '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Scorpion: " + foundEntry.getKey());
-        } else {
-            System.out.println("Власник '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутній в Hashtable.");
-        }
+        keysToRemove.forEach(hashtable::remove);
     }
 
     /**
@@ -387,16 +364,13 @@ public class BasicDataOperationUsingMap {
     void removeByValueFromHashtable() {
         long timeStart = System.nanoTime();
 
-        List<Scorpion> keysToRemove = new ArrayList<>();
-        for (Map.Entry<Scorpion, String> entry : hashtable.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE)) {
-                keysToRemove.add(entry.getKey());
-            }
-        }
-        
-        for (Scorpion key : keysToRemove) {
-            hashtable.remove(key);
-        }
+        List<Scorpion> keysToRemove = hashtable.entrySet().stream()
+                .filter(entry -> entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+       
+        keysToRemove.forEach(hashtable::remove);
+
 
         PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з Hashtable");
 
@@ -413,9 +387,11 @@ public class BasicDataOperationUsingMap {
         System.out.println("\n=== Пари ключ-значення в LinkedHashMap ===");
 
         long timeStart = System.nanoTime();
-        for (Map.Entry<Scorpion, String> entry : linkedHashMap.entrySet()) {
-            System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
-        }
+
+        linkedHashMap.entrySet().forEach(entry ->
+            System.out.println("  " + entry.getKey() + " -> " + entry.getValue())
+        );
+
 
         PerformanceTracker.displayOperationTime(timeStart, "виведення пар ключ-значення в LinkedHashMap");
     }
@@ -444,30 +420,13 @@ public class BasicDataOperationUsingMap {
      * Сортує список Map.Entry за значеннями та використовує бінарний пошук.
      */
     void findByValueInLinkedHashMap() {
-        long timeStart = System.nanoTime();
+        List<Scorpion> keysToRemove = linkedHashMap.entrySet().stream()
+            .filter(entry -> entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
 
-        // Створюємо список Entry та сортуємо за значеннями
-        List<Map.Entry<Scorpion, String>> entries = new ArrayList<>(linkedHashMap.entrySet());
-        OwnerValueComparator comparator = new OwnerValueComparator();
-        Collections.sort(entries, comparator);
 
-        // Створюємо тимчасовий Entry для пошуку
-        Map.Entry<Scorpion, String> searchEntry = new Map.Entry<Scorpion, String>() {
-            public Scorpion getKey() { return null; }
-            public String getValue() { return VALUE_TO_SEARCH_AND_DELETE; }
-            public String setValue(String value) { return null; }
-        };
-
-        int position = Collections.binarySearch(entries, searchEntry, comparator);
-
-        PerformanceTracker.displayOperationTime(timeStart, "бінарний пошук за значенням в LinkedHashMap");
-
-        if (position >= 0) {
-            Map.Entry<Scorpion, String> foundEntry = entries.get(position);
-            System.out.println("Власника '" + VALUE_TO_SEARCH_AND_DELETE + "' знайдено. Scorpion: " + foundEntry.getKey());
-        } else {
-            System.out.println("Власник '" + VALUE_TO_SEARCH_AND_DELETE + "' відсутній в LinkedHashMap.");
-        }
+        keysToRemove.forEach(linkedHashMap::remove);
     }
 
     /**
@@ -506,16 +465,12 @@ public class BasicDataOperationUsingMap {
     void removeByValueFromLinkedHashMap() {
         long timeStart = System.nanoTime();
 
-        List<Scorpion> keysToRemove = new ArrayList<>();
-        for (Map.Entry<Scorpion, String> entry : linkedHashMap.entrySet()) {
-            if (entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE)) {
-                keysToRemove.add(entry.getKey());
-            }
-        }
-        
-        for (Scorpion key : keysToRemove) {
-            linkedHashMap.remove(key);
-        }
+        List<Scorpion> keysToRemove = linkedHashMap.entrySet().stream()
+            .filter(entry -> entry.getValue() != null && entry.getValue().equals(VALUE_TO_SEARCH_AND_DELETE))
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+       
+        keysToRemove.forEach(hashtable::remove);
 
         PerformanceTracker.displayOperationTime(timeStart, "видалення за значенням з LinkedHashMap");
 
